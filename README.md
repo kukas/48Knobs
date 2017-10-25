@@ -6,7 +6,8 @@ PCB schematics and firmware for a custom MIDI controller
 ![48Knobs midi controller](pics/final.jpg)
 
 DIY Arduino MIDI controller featuring 48 rotatory knobs (potentiometers). The values are sent out by MIDI CC signals through DIN-5 or USB port. Intended use is to control various software synthesizers but it can be used as a virtual mixer control or user input for custom software (for example [MAX/MSP](https://cycling74.com/products/max/) or [Processing](https://processing.org/) applications).
-My work on this project started before Bastl Instruments released their own [60Knobs](http://www.bastl-instruments.com/instruments/sixtyknobs/) controller but I included some of their ideas to my controller (). 
+
+My work on this project started before Bastl Instruments released their own [60Knobs](http://www.bastl-instruments.com/instruments/sixtyknobs/) controller but I included some of their ideas to my controller. 
 
 ### Features
 
@@ -20,7 +21,9 @@ My work on this project started before Bastl Instruments released their own [60K
 ## Schematics and PCB layout
 
 Knobs are divided into six rows of eight potentiometers each. In each row, potentiometers are connected to a 8-channel multiplexer, the output is connected directly to analog pins on the Arduino Mini (there are 8 analog pins in total out of which 6 are used). Three digital pins are connected to selector pins on MUX'es.
-For MIDI output, TX pin is connected to DIN-5 connector and _MIDI to USB_ adapter, I didn't bother creating my own schematic for _MIDI to USB_ since it was so cheap on eBay. 
+
+For MIDI output, TX pin is connected to DIN-5 connector and _MIDI to USB_ adapter, I didn't bother creating my own schematic for _MIDI to USB_ since it was so cheap on eBay.
+
 MIDI input is not implemented, although it would have been nice for configuration without reprogramming.
 
 ### Parts
