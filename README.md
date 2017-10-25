@@ -3,7 +3,7 @@ PCB schematics and firmware for a custom MIDI controller
 
 ## About
 
-DIY Arduino MIDI controller featuring 48 rotatory knobs (potentiometers). The values are sent out by MIDI CC signals through DIN-5 or USB port. Intended use is to control various software synthesizers but it can be used as a virtual mixer control or user input for custom software (for example [MAX/MSP](https://cycling74.com/products/max/) or [Processing](https://processing.org/) applications).
+DIY Arduino MIDI controller featuring 48 rotatory potentiometers (knobs). The values are sent out by MIDI CC signals through DIN-5 or USB port. The intended use is to control various software synthesizers but it can be used as a virtual mixer control or as an input device for custom software (for example [MAX/MSP](https://cycling74.com/products/max/) or [Processing](https://processing.org/) applications).
 
 My work on this project started before Bastl Instruments released their own [60Knobs](http://www.bastl-instruments.com/instruments/sixtyknobs/) controller but I included some of their ideas to my controller. 
 
