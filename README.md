@@ -26,6 +26,8 @@ For MIDI output, TX pin is connected to DIN-5 connector and _MIDI to USB_ adapte
 
 MIDI input is not implemented, although it would have been nice for configuration without reprogramming.
 
+![48Knobs PCB](pcb/48knobs_pcb_preview.png)
+
 ### Parts
 
 - 1x [DIN 5 connector (MIDI)](https://www.gme.cz/konektor-din-5-p-zp90-st)
