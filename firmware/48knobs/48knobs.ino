@@ -1,11 +1,19 @@
-// #define OUT_MIDI
+#define OUT_MIDI
 
 #ifdef OUT_MIDI
 #include <MIDI.h>
 MIDI_CREATE_DEFAULT_INSTANCE();
 #endif
 
+#include "button.cpp"
+
 // pin definitions
+const int led1 = 8;
+const int led2 = 9;
+
+Button button1(12);
+Button button2(11);
+Button button3(10);
 
 // select pins
 const int S0 = 2;
@@ -21,6 +29,10 @@ const int avg = 4;
 int knobs[6][8][avg];
 float lastSent[6][8];
 int pAvg = 0;
+
+int ccStartDefault = 32;
+int ccStart = ccStartDefault;
+bool midiDumpFlag = false;
 
 // Selects a column using column mapping
 // currently the mapping is set so that
@@ -41,6 +53,25 @@ int readPotentiometer(const byte which) {
   return 1023 - analogRead(knobPins[which]);
 }
 
+// button events
+void ccStartLED(){
+  if(ccStart < ccStartDefault){
+    digitalWrite(led1, HIGH);
+    digitalWrite(led2, LOW);
+  }
+  else if(ccStart > ccStartDefault){
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, HIGH);
+  }
+  else {
+    digitalWrite(led1, LOW);
+    digitalWrite(led2, LOW);
+  }
+}
+void incCCStart(){ ccStart += 48;ccStartLED(); }
+void decCCStart(){ ccStart -= 48;ccStartLED(); }
+void midiDump(){ midiDumpFlag = true; }
+
 void setup() {
   #ifdef OUT_MIDI
   MIDI.begin(1);
@@ -52,14 +83,23 @@ void setup() {
   pinMode(S1, OUTPUT);
   pinMode(S2, OUTPUT);
 
+  pinMode(led1, OUTPUT);
+  pinMode(led2, OUTPUT);
+
   pinMode(LED_BUILTIN, OUTPUT);
+
+  button1.onDown = &midiDump;
+  button2.onDown = &decCCStart;
+  button3.onDown = &incCCStart;
 }
 
 void loop() {
-  #ifndef OUT_MIDI
+  button1.update();
+  button2.update();
+  button3.update();
   
-  #endif
   digitalWrite(LED_BUILTIN, LOW);
+  
   for (byte col = 0; col < 8; col++) {
     setColumn(col);
     for (byte row = 0; row < 6; row++){
@@ -72,11 +112,11 @@ void loop() {
 
       float avgKnob = sum/(float)avg;
 
-      if(abs(avgKnob-lastSent[row][col]) > 1){
+      if(abs(avgKnob-lastSent[row][col]) > 1 || midiDumpFlag){
         lastSent[row][col] = avgKnob;
         int intAvgKnob = ((int)round(avgKnob))>>3;
         #ifdef OUT_MIDI
-        MIDI.sendControlChange(75+row*8+col, intAvgKnob, 1);
+        MIDI.sendControlChange(ccStart+row*8+col, intAvgKnob, 1);
         #else
         Serial.print(col);
         Serial.print("x");
@@ -91,5 +131,7 @@ void loop() {
     }
   }
   pAvg = (pAvg+1)%avg;
+  midiDumpFlag = false;
   delay(10);
 }
+
