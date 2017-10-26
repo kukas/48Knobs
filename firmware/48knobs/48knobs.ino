@@ -1,4 +1,4 @@
-#define OUT_MIDI
+// #define OUT_MIDI
 
 #ifdef OUT_MIDI
 #include <MIDI.h>
@@ -15,7 +15,7 @@ const int S2 = 4;
 // column number mapping
 const int knobCols[8] = {5,7,3,1,2,4,0,6};
 // analog output pins
-const int knobPins[6] = {A4, A5, A0, A1, A2, A3};
+const int knobPins[6] = {A6, A7, A0, A1, A2, A3};
 
 const int avg = 4;
 int knobs[6][8][avg];
@@ -56,6 +56,9 @@ void setup() {
 }
 
 void loop() {
+  #ifndef OUT_MIDI
+  
+  #endif
   digitalWrite(LED_BUILTIN, LOW);
   for (byte col = 0; col < 8; col++) {
     setColumn(col);
@@ -75,6 +78,10 @@ void loop() {
         #ifdef OUT_MIDI
         MIDI.sendControlChange(75+row*8+col, intAvgKnob, 1);
         #else
+        Serial.print(col);
+        Serial.print("x");
+        Serial.print(row);
+        Serial.print("=");
         Serial.println(avgKnob);
         #endif
         digitalWrite(LED_BUILTIN, HIGH);
