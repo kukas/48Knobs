@@ -5,7 +5,10 @@ PCB schematics and firmware for a custom MIDI controller
 
 DIY Arduino MIDI controller featuring 48 rotatory potentiometers (knobs). The values are sent out by MIDI CC signals through DIN-5 or USB port. The intended use is to control various software synthesizers but it can be used as a virtual mixer control or as an input device for custom software (for example [MAX/MSP](https://cycling74.com/products/max/) or [Processing](https://processing.org/) applications).
 
-My work on this project started before Bastl Instruments released their own [60Knobs](http://www.bastl-instruments.com/instruments/sixtyknobs/) controller but I incorporated some of their ideas into my design. 
+My work on this project started before Bastl Instruments released their own [60Knobs](http://www.bastl-instruments.com/instruments/sixtyknobs/) controller but I incorporated some of their ideas into my design.
+
+There is also a similar MIDI controller [Behringer B-CONTROL ROTARY BCR2000
+](https://www.music-group.com/Categories/Behringer/Computer-Audio/Desktop-Controllers/BCR2000/p/P0245) with 32 knobs.
 
 ![48Knobs midi controller](pics/final.jpg)
 
