@@ -30,8 +30,8 @@ int knobs[6][8][avg];
 float lastSent[6][8];
 int pAvg = 0;
 
-int ccStartDefault = 32;
-int ccStart = ccStartDefault;
+int midiChannel = 1;
+int ccStart = 12;
 bool midiDumpFlag = false;
 
 // Selects a column using column mapping
@@ -55,26 +55,27 @@ int readPotentiometer(const byte which) {
 
 // button events
 void ccStartLED(){
-  if(ccStart < ccStartDefault){
-    digitalWrite(led1, HIGH);
-    digitalWrite(led2, LOW);
-  }
-  else if(ccStart > ccStartDefault){
-    digitalWrite(led1, LOW);
-    digitalWrite(led2, HIGH);
-  }
-  else {
-    digitalWrite(led1, LOW);
-    digitalWrite(led2, LOW);
-  }
+  if(midiChannel < 1)
+    midiChannel = 1;
+  if(midiChannel > 16)
+    midiChannel = 16;
+  digitalWrite(led2, (midiChannel & 1) ? HIGH : LOW);
+  digitalWrite(led1, (midiChannel & 2) ? HIGH : LOW);
 }
-void incCCStart(){ ccStart += 48;ccStartLED(); }
-void decCCStart(){ ccStart -= 48;ccStartLED(); }
+void incCCStart(){ midiChannel++;ccStartLED(); }
+void decCCStart(){ midiChannel--;ccStartLED(); }
 void midiDump(){ midiDumpFlag = true; }
+
+void sendNRPN(uint8_t NRPNNumberMSB, uint8_t NRPNNumberLSB, int16_t value, uint8_t channel) {
+  MIDI.sendControlChange(99, NRPNNumberLSB & 0x7F, channel); //NRPN Number LSB
+  MIDI.sendControlChange(98, NRPNNumberMSB & 0x7F, channel);  //NRPN Number MSB
+  MIDI.sendControlChange(6, (value>>3) & 0x7f, channel);  //NRPN MSB
+  // MIDI.sendControlChange(38, value & 0x7f, channel); //NRPN LSB
+}
 
 void setup() {
   #ifdef OUT_MIDI
-  MIDI.begin(1);
+  MIDI.begin(MIDI_CHANNEL_OFF); // input MIDI channel, not usable on this controller, 255 = off
   #else
   Serial.begin(9600);
   #endif
@@ -91,6 +92,8 @@ void setup() {
   button1.onDown = &midiDump;
   button2.onDown = &decCCStart;
   button3.onDown = &incCCStart;
+
+  ccStartLED();
 }
 
 void loop() {
@@ -112,11 +115,12 @@ void loop() {
 
       float avgKnob = sum/(float)avg;
 
-      if(abs(avgKnob-lastSent[row][col]) > 1 || midiDumpFlag){
+      if(abs(avgKnob-lastSent[row][col]) > 2 || midiDumpFlag){
         lastSent[row][col] = avgKnob;
-        int intAvgKnob = ((int)round(avgKnob))>>3;
+        int intAvgKnob = ((int)round(avgKnob));
         #ifdef OUT_MIDI
-        MIDI.sendControlChange(ccStart+row*8+col, intAvgKnob, 1);
+        MIDI.sendControlChange(ccStart+row*8+col, (intAvgKnob>>3) & 0x7f, midiChannel);
+        // sendNRPN(ccStart+row*8+col, 1, intAvgKnob, midiChannel);
         #else
         Serial.print(col);
         Serial.print("x");
